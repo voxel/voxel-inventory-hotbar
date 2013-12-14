@@ -1,0 +1,6 @@
+# inventory-toolbar
+
+## License
+
+MIT
+

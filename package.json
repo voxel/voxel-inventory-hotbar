@@ -1,0 +1,20 @@
+{
+  "name": "inventory-toolbar",
+  "description": "connect an inventory to a toolbar",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:deathcap/inventory-toolbar.git"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "inventory": "git://github.com/deathcap/inventory.git",
+    "itempile": "git://github.com/deathcap/inventory.git",
+    "deep-equal": "~0.1.0"
+  },
+  "devDependencies": {
+    "tape": "2.3.0"
+  }
+}
