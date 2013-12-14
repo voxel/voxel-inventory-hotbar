@@ -5,12 +5,12 @@ EventEmitter = (require 'events').EventEmitter
 module.exports = (game, opts) ->
   new InventoryToolbar(game, opts)
 
-class InventoryTool extends EventEmitter
+class InventoryToolbar extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
-    @toolbar = opts.toolbar ? throw 'inventory-toolbar requires "toolbar" option set to toolbar instance'
-    @inventory = opts.inventory ? throw 'inventory-toolbar requires "inventory" option set to inventory instance'
+    @toolbar = opts.toolbar ? throw 'voxel-inventory-toolbar requires "toolbar" option set to toolbar instance'
+    @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
 
     @currentSlot = 0
 
