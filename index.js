@@ -14,7 +14,7 @@
     __extends(InventoryToolbar, _super);
 
     function InventoryToolbar(game, opts) {
-      var _ref, _ref1;
+      var _ref, _ref1, _ref2;
       this.game = game;
       if (opts == null) {
         opts = {};
@@ -31,6 +31,13 @@
           return _ref1;
         } else {
           throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance';
+        }
+      })();
+      this.registry = (function() {
+        if ((_ref2 = opts.registry) != null) {
+          return _ref2;
+        } else {
+          throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance';
         }
       })();
       this.currentSlot = 0;
@@ -68,7 +75,7 @@
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         slot = _ref[i];
         if (slot != null) {
-          blockTextures = registry.getBlockProps(slot.item).texture;
+          blockTextures = this.registry.getBlockProps(slot.item).texture;
           itemTexture = typeof blockTextures === 'string' ? blockTextures : blockTextures[0];
           content.push({
             icon: this.game.materials.texturePath + itemTexture + '.png',
@@ -81,7 +88,7 @@
           });
         }
       }
-      return toolbar.updateContent(content);
+      return this.toolbar.updateContent(content);
     };
 
     return InventoryToolbar;

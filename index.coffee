@@ -11,6 +11,7 @@ class InventoryToolbar extends EventEmitter
 
     @toolbar = opts.toolbar ? throw 'voxel-inventory-toolbar requires "toolbar" option set to toolbar instance'
     @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
+    @registry = opts.registry ? throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance'
 
     @currentSlot = 0
 
@@ -39,11 +40,11 @@ class InventoryToolbar extends EventEmitter
     for slot, i in @inventory.array
       if slot?
         # TODO: configurable item textures (for now only uses block top)
-        blockTextures = registry.getBlockProps(slot.item).texture
+        blockTextures = @registry.getBlockProps(slot.item).texture
         itemTexture = if typeof blockTextures == 'string' then blockTextures else blockTextures[0]
 
         content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:''+slot.count, id:i}
       else
         content.push {id:i}
 
-    toolbar.updateContent content
+    @toolbar.updateContent content
