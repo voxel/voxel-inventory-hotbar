@@ -14,12 +14,75 @@
     __extends(InventoryTool, _super);
 
     function InventoryTool(game, opts) {
+      var _ref, _ref1;
+      this.game = game;
+      if (opts == null) {
+        opts = {};
+      }
+      this.toolbar = (function() {
+        if ((_ref = opts.toolbar) != null) {
+          return _ref;
+        } else {
+          throw 'inventory-toolbar requires "toolbar" option set to toolbar instance';
+        }
+      })();
+      this.inventory = (function() {
+        if ((_ref1 = opts.inventory) != null) {
+          return _ref1;
+        } else {
+          throw 'inventory-toolbar requires "inventory" option set to inventory instance';
+        }
+      })();
+      this.currentSlot = 0;
       this.enable();
     }
 
-    InventoryTool.prototype.enable = function() {};
+    InventoryTool.prototype.enable = function() {
+      return this.toolbar.on('select', this.select = function(slot) {
+        return this.currentSlot = slot;
+      });
+    };
 
-    InventoryTool.prototype.disable = function() {};
+    InventoryTool.prototype.disable = function() {
+      return this.toolbar.removeListener('select', this.select);
+    };
+
+    InventoryTool.prototype.give = function(itemPile) {
+      var ret;
+      ret = this.inventory.give(itemPile);
+      this.refresh();
+      return ret;
+    };
+
+    InventoryTool.prototype.take = function(itemPile) {
+      var ret;
+      ret = this.inventory.take(itemPile);
+      this.refresh();
+      return ret;
+    };
+
+    InventoryTool.prototype.refresh = function() {
+      var blockTextures, content, i, itemTexture, slot, _i, _len, _ref;
+      content = [];
+      _ref = this.inventory.array;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        slot = _ref[i];
+        if (slot != null) {
+          blockTextures = registry.getBlockProps(slot.item).texture;
+          itemTexture = typeof blockTextures === 'string' ? blockTextures : blockTextures[0];
+          content.push({
+            icon: this.game.materials.texturePath + itemTexture + '.png',
+            label: '' + slot.count,
+            id: i
+          });
+        } else {
+          content.push({
+            id: i
+          });
+        }
+      }
+      return toolbar.updateContent(content);
+    };
 
     return InventoryTool;
 
