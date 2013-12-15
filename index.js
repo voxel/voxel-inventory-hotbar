@@ -82,16 +82,21 @@
     };
 
     InventoryToolbar.prototype.refresh = function() {
-      var content, i, itemTexture, slot, _i, _len, _ref;
+      var content, i, itemTexture, label, slot, _i, _len, _ref;
       content = [];
       _ref = this.inventory.array;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         slot = _ref[i];
         if (slot != null) {
           itemTexture = this.registry.getBlockProps(slot.item).itemTexture;
+          if (slot.count === Infinity) {
+            label = slot.item;
+          } else {
+            label = '' + slot.count;
+          }
           content.push({
             icon: this.game.materials.texturePath + itemTexture + '.png',
-            label: '' + slot.count,
+            label: label,
             id: i
           });
         } else {

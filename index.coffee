@@ -48,7 +48,14 @@ class InventoryToolbar extends EventEmitter
     for slot, i in @inventory.array
       if slot?
         itemTexture = @registry.getBlockProps(slot.item).itemTexture
-        content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:''+slot.count, id:i}
+
+        # label is count if finite, or name (for creative mode) if infinite
+        if slot.count == Infinity
+          label = slot.item
+        else
+          label = ''+slot.count
+
+        content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:label, id:i}
       else
         content.push {id:i}
 
