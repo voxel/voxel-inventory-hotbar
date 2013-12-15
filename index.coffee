@@ -39,10 +39,7 @@ class InventoryToolbar extends EventEmitter
     content = []
     for slot, i in @inventory.array
       if slot?
-        # TODO: configurable item textures (for now only uses block top)
-        blockTextures = @registry.getBlockProps(slot.item).texture
-        itemTexture = if typeof blockTextures == 'string' then blockTextures else blockTextures[0]
-
+        itemTexture = @registry.getBlockProps(slot.item).itemTexture
         content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:''+slot.count, id:i}
       else
         content.push {id:i}

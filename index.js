@@ -69,14 +69,13 @@
     };
 
     InventoryToolbar.prototype.refresh = function() {
-      var blockTextures, content, i, itemTexture, slot, _i, _len, _ref;
+      var content, i, itemTexture, slot, _i, _len, _ref;
       content = [];
       _ref = this.inventory.array;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         slot = _ref[i];
         if (slot != null) {
-          blockTextures = this.registry.getBlockProps(slot.item).texture;
-          itemTexture = typeof blockTextures === 'string' ? blockTextures : blockTextures[0];
+          itemTexture = this.registry.getBlockProps(slot.item).itemTexture;
           content.push({
             icon: this.game.materials.texturePath + itemTexture + '.png',
             label: '' + slot.count,
