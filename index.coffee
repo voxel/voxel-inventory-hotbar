@@ -20,9 +20,12 @@ class InventoryToolbar extends EventEmitter
   enable: () ->
     @toolbar.on 'select', @select = (slot) ->
       @currentSlot = slot
+
+    @toolbar.el.style.visibility = ''
   
   disable: () ->
     @toolbar.removeListener 'select', @select
+    @toolbar.el.style.visibility = 'hidden'  # TODO: option to "disable" in toolbar module, unbind events (num keys), hide..
 
   give: (itemPile) ->
     ret = @inventory.give itemPile

@@ -45,13 +45,15 @@
     }
 
     InventoryToolbar.prototype.enable = function() {
-      return this.toolbar.on('select', this.select = function(slot) {
+      this.toolbar.on('select', this.select = function(slot) {
         return this.currentSlot = slot;
       });
+      return this.toolbar.el.style.visibility = '';
     };
 
     InventoryToolbar.prototype.disable = function() {
-      return this.toolbar.removeListener('select', this.select);
+      this.toolbar.removeListener('select', this.select);
+      return this.toolbar.el.style.visibility = 'hidden';
     };
 
     InventoryToolbar.prototype.give = function(itemPile) {
