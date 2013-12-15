@@ -37,6 +37,11 @@ class InventoryToolbar extends EventEmitter
     @refresh()
     ret
 
+  takeSelected: (count=1) ->
+    ret = @inventory.takeAt @currentSlot, count
+    @refresh()
+    ret
+
   # update toolbar with inventory contents
   refresh: () ->
     content = []

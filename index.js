@@ -71,6 +71,16 @@
       return ret;
     };
 
+    InventoryToolbar.prototype.takeSelected = function(count) {
+      var ret;
+      if (count == null) {
+        count = 1;
+      }
+      ret = this.inventory.takeAt(this.currentSlot, count);
+      this.refresh();
+      return ret;
+    };
+
     InventoryToolbar.prototype.refresh = function() {
       var content, i, itemTexture, slot, _i, _len, _ref;
       content = [];
