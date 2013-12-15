@@ -49,6 +49,7 @@
       this.toolbar.on('select', this.select = function(slot) {
         return _this.currentSlot = slot;
       });
+      this.refresh();
       return this.toolbar.el.style.visibility = '';
     };
 
