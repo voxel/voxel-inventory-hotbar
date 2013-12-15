@@ -18,7 +18,7 @@ class InventoryToolbar extends EventEmitter
     @enable()
 
   enable: () ->
-    @toolbar.on 'select', @select = (slot) ->
+    @toolbar.on 'select', @select = (slot) =>
       @currentSlot = slot
 
     @toolbar.el.style.visibility = ''

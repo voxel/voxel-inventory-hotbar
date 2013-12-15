@@ -45,8 +45,9 @@
     }
 
     InventoryToolbar.prototype.enable = function() {
+      var _this = this;
       this.toolbar.on('select', this.select = function(slot) {
-        return this.currentSlot = slot;
+        return _this.currentSlot = slot;
       });
       return this.toolbar.el.style.visibility = '';
     };
