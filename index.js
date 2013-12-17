@@ -93,7 +93,7 @@
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         slot = _ref[i];
         if (slot != null) {
-          itemTexture = this.registry.getBlockProps(slot.item).itemTexture;
+          itemTexture = this.registry.getItemProps(slot.item).itemTexture;
           if (slot.count === Infinity) {
             label = slot.item;
           } else {

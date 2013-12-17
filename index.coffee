@@ -53,7 +53,7 @@ class InventoryToolbar extends EventEmitter
     content = []
     for slot, i in @inventory.array
       if slot?
-        itemTexture = @registry.getBlockProps(slot.item).itemTexture
+        itemTexture = @registry.getItemProps(slot.item).itemTexture
 
         # label is count if finite, or name (for creative mode) if infinite
         if slot.count == Infinity
