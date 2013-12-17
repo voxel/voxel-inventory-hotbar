@@ -58,6 +58,8 @@ class InventoryToolbar extends EventEmitter
         # label is count if finite, or name (for creative mode) if infinite
         if slot.count == Infinity
           label = slot.item
+        else if slot.count == 1
+          label = ''
         else
           label = ''+slot.count
 

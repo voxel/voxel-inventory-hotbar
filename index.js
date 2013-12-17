@@ -96,6 +96,8 @@
           itemTexture = this.registry.getItemProps(slot.item).itemTexture;
           if (slot.count === Infinity) {
             label = slot.item;
+          } else if (slot.count === 1) {
+            label = '';
           } else {
             label = '' + slot.count;
           }
