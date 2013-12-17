@@ -38,10 +38,15 @@ class InventoryToolbar extends EventEmitter
     @refresh()
     ret
 
-  takeSelected: (count=1) ->
+  # take some items from the pile the player is currently holding
+  takeHeld: (count=1) ->
     ret = @inventory.takeAt @currentSlot, count
     @refresh()
     ret
+
+  # get the pile of items the player is currently holding
+  held: () ->
+    @inventory.slot @currentSlot
 
   # update toolbar with inventory contents
   refresh: () ->

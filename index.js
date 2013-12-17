@@ -72,7 +72,7 @@
       return ret;
     };
 
-    InventoryToolbar.prototype.takeSelected = function(count) {
+    InventoryToolbar.prototype.takeHeld = function(count) {
       var ret;
       if (count == null) {
         count = 1;
@@ -80,6 +80,10 @@
       ret = this.inventory.takeAt(this.currentSlot, count);
       this.refresh();
       return ret;
+    };
+
+    InventoryToolbar.prototype.held = function() {
+      return this.inventory.slot(this.currentSlot);
     };
 
     InventoryToolbar.prototype.refresh = function() {
