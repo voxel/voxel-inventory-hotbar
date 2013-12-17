@@ -14,7 +14,8 @@
     __extends(InventoryToolbar, _super);
 
     function InventoryToolbar(game, opts) {
-      var _ref, _ref1, _ref2;
+      var _ref, _ref1, _ref2,
+        _this = this;
       this.game = game;
       if (opts == null) {
         opts = {};
@@ -40,6 +41,9 @@
           throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance';
         }
       })();
+      this.inventory.on('changed', function() {
+        return _this.refresh();
+      });
       this.currentSlot = 0;
       this.enable();
     }
@@ -59,27 +63,18 @@
     };
 
     InventoryToolbar.prototype.give = function(itemPile) {
-      var ret;
-      ret = this.inventory.give(itemPile);
-      this.refresh();
-      return ret;
+      return this.inventory.give(itemPile);
     };
 
     InventoryToolbar.prototype.take = function(itemPile) {
-      var ret;
-      ret = this.inventory.take(itemPile);
-      this.refresh();
-      return ret;
+      return this.inventory.take(itemPile);
     };
 
     InventoryToolbar.prototype.takeHeld = function(count) {
-      var ret;
       if (count == null) {
         count = 1;
       }
-      ret = this.inventory.takeAt(this.currentSlot, count);
-      this.refresh();
-      return ret;
+      return this.inventory.takeAt(this.currentSlot, count);
     };
 
     InventoryToolbar.prototype.held = function() {

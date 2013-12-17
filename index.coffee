@@ -13,6 +13,8 @@ class InventoryToolbar extends EventEmitter
     @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
     @registry = opts.registry ? throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance'
 
+    @inventory.on 'changed', () => @refresh()
+
     @currentSlot = 0
 
     @enable()
@@ -28,21 +30,11 @@ class InventoryToolbar extends EventEmitter
     @toolbar.removeListener 'select', @select
     @toolbar.el.style.visibility = 'hidden'  # TODO: option to "disable" in toolbar module, unbind events (num keys), hide..
 
-  give: (itemPile) ->
-    ret = @inventory.give itemPile
-    @refresh()
-    ret
-
-  take: (itemPile) ->
-    ret = @inventory.take itemPile
-    @refresh()
-    ret
+  give: (itemPile) -> @inventory.give itemPile
+  take: (itemPile) -> @inventory.take itemPile
 
   # take some items from the pile the player is currently holding
-  takeHeld: (count=1) ->
-    ret = @inventory.takeAt @currentSlot, count
-    @refresh()
-    ret
+  takeHeld: (count=1) -> @inventory.takeAt @currentSlot, count
 
   # get the pile of items the player is currently holding
   held: () ->
