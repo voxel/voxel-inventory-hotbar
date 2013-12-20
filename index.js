@@ -14,7 +14,7 @@
     __extends(InventoryToolbar, _super);
 
     function InventoryToolbar(game, opts) {
-      var _ref, _ref1, _ref2,
+      var _ref, _ref1, _ref2, _ref3,
         _this = this;
       this.game = game;
       if (opts == null) {
@@ -41,6 +41,7 @@
           throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance';
         }
       })();
+      this.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
       this.inventory.on('changed', function() {
         return _this.refresh();
       });
@@ -78,23 +79,22 @@
     };
 
     InventoryToolbar.prototype.held = function() {
-      return this.inventory.slot(this.currentSlot);
+      return this.inventory.get(this.currentSlot);
     };
 
     InventoryToolbar.prototype.refresh = function() {
-      var content, i, itemTexture, label, slot, _i, _len, _ref;
+      var content, i, itemPile, itemTexture, label, _i, _ref;
       content = [];
-      _ref = this.inventory.array;
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        slot = _ref[i];
-        if (slot != null) {
-          itemTexture = this.registry.getItemProps(slot.item).itemTexture;
-          if (slot.count === Infinity) {
-            label = slot.item;
-          } else if (slot.count === 1) {
+      for (i = _i = 0, _ref = this.inventorySize; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        itemPile = this.inventory.get(i);
+        if (itemPile != null) {
+          itemTexture = this.registry.getItemProps(itemPile.item).itemTexture;
+          if (itemPile.count === Infinity) {
+            label = itemPile.item;
+          } else if (itemPile.count === 1) {
             label = '';
           } else {
-            label = '' + slot.count;
+            label = '' + itemPile.count;
           }
           content.push({
             icon: this.game.materials.texturePath + itemTexture + '.png',

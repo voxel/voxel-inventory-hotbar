@@ -13,8 +13,9 @@ class InventoryToolbar extends EventEmitter
     @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
     @registry = opts.registry ? throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance'
 
-    @inventory.on 'changed', () => @refresh()
+    @inventorySize = opts.inventorySize ? @inventory.size()
 
+    @inventory.on 'changed', () => @refresh()
     @currentSlot = 0
 
     @enable()
@@ -43,17 +44,18 @@ class InventoryToolbar extends EventEmitter
   # update toolbar with inventory contents
   refresh: () ->
     content = []
-    for slot, i in @inventory.array
-      if slot?
-        itemTexture = @registry.getItemProps(slot.item).itemTexture
+    for i in [0...@inventorySize]
+      itemPile = @inventory.get(i)
+      if itemPile?
+        itemTexture = @registry.getItemProps(itemPile.item).itemTexture
 
         # label is count if finite, or name (for creative mode) if infinite
-        if slot.count == Infinity
-          label = slot.item
-        else if slot.count == 1
+        if itemPile.count == Infinity
+          label = itemPile.item
+        else if itemPile.count == 1
           label = ''
         else
-          label = ''+slot.count
+          label = ''+itemPile.count
 
         content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:label, id:i}
       else
