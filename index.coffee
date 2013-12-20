@@ -38,7 +38,7 @@ class InventoryToolbar extends EventEmitter
 
   # get the pile of items the player is currently holding
   held: () ->
-    @inventory.slot @currentSlot
+    @inventory.get @currentSlot
 
   # update toolbar with inventory contents
   refresh: () ->
