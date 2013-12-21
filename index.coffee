@@ -2,6 +2,7 @@
 
 EventEmitter = (require 'events').EventEmitter
 InventoryWindow = require 'inventory-window'
+ever = require 'ever'
 
 module.exports = (game, opts) ->
   new InventoryHotbar(game, opts)
@@ -10,8 +11,8 @@ class InventoryHotbar extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
-    @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
-    @registry = opts.registry ? throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance'
+    @inventory = opts.inventory ? throw 'voxel-inventory-hotbar requires "inventory" option set to inventory instance'
+    @registry = opts.registry ? throw 'voxel-inventory-hotbar requires "registry" option set to voxel-registry instance'
 
     windowOpts = opts.windowOpts ? {}
     windowOpts.inventory ?= @inventory 
@@ -20,8 +21,11 @@ class InventoryHotbar extends EventEmitter
     windowOpts.getTexture ?= opts.getTexture ? (itemPile) =>
       game.materials.texturePath + @registry.getItemProps(itemPile.item).itemTexture + '.png'
     @inventoryWindow = new InventoryWindow windowOpts
+    @inventoryWindow.selectedIndex = 0
+
     container = @inventoryWindow.createContainer()
 
+    # center at bottom of screen
     container.style.position = 'fixed'
     container.style.bottom = '0px'
     container.style.zIndex = 5
@@ -29,24 +33,34 @@ class InventoryHotbar extends EventEmitter
     container.style.left = '33%'
     document.body.appendChild container
 
-    @currentSlot = 0
     @enable()
 
   enable: () ->
     @inventoryWindow.container.style.visibility = ''
+
+    @keydown = (ev) =>   # TODO: disable whem gui open?
+      if '0'.charCodeAt(0) <= ev.keyCode <= '9'.charCodeAt(0)
+        slot = ev.keyCode - '0'.charCodeAt(0) 
+        if slot == 0
+          slot = 10
+        else
+          slot -= 1
+        @inventoryWindow.setSelected(slot)
+    ever(document.body).on 'keydown', @keydown
   
   disable: () ->
     @inventoryWindow.container.style.visibility = 'hidden'
+    ever(document.body).removeListener 'keydown', @keydown
 
   give: (itemPile) -> @inventory.give itemPile
   take: (itemPile) -> @inventory.take itemPile
 
   # take some items from the pile the player is currently holding
-  takeHeld: (count=1) -> @inventory.takeAt @currentSlot, count
+  takeHeld: (count=1) -> @inventory.takeAt @inventoryWindow.selectedIndex, count
 
   # get the pile of items the player is currently holding
   held: () ->
-    @inventory.get @currentSlot
+    @inventory.get @inventoryWindow.selectedIndex
 
   refresh: () ->
     @inventoryWindow.refresh()

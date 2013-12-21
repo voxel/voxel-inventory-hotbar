@@ -12,8 +12,8 @@
   "dependencies": {
     "inventory": "git://github.com/deathcap/inventory.git",
     "itempile": "git://github.com/deathcap/itempile.git",
-    "inventory-window": "git://github.com/deathcap/inventory-window.git"
+    "inventory-window": "git://github.com/deathcap/inventory-window.git",
+    "ever": "0.0.3"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
