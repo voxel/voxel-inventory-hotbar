@@ -1,35 +1,45 @@
 # vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
 
 EventEmitter = (require 'events').EventEmitter
+InventoryWindow = require 'inventory-window'
 
 module.exports = (game, opts) ->
-  new InventoryToolbar(game, opts)
+  new InventoryHotbar(game, opts)
 
-class InventoryToolbar extends EventEmitter
+class InventoryHotbar extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
-    @toolbar = opts.toolbar ? throw 'voxel-inventory-toolbar requires "toolbar" option set to toolbar instance'
     @inventory = opts.inventory ? throw 'voxel-inventory-toolbar requires "inventory" option set to inventory instance'
     @registry = opts.registry ? throw 'voxel-inventory-toolbar requires "registry" option set to voxel-registry instance'
 
-    @inventorySize = opts.inventorySize ? @inventory.size()
+    windowOpts = opts.windowOpts ? {}
+    windowOpts.inventory ?= @inventory 
+    windowOpts.inventorySize ?= opts.inventorySize ? @inventory.size()
+    windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
+    windowOpts.getTexture ?= opts.getTexture ? (itemPile) =>
+      game.materials.texturePath + @registry.getItemProps(itemPile.item).itemTexture + '.png'
+    @inventoryWindow = new InventoryWindow windowOpts
+    container = @inventoryWindow.createContainer()
+    console.log 'old style=',container.style
 
-    @inventory.on 'changed', () => @refresh()
+    container.style.position = 'fixed'
+    container.style.bottom = '0px'
+    # TODO: center better, see toolbar module CSS
+    container.style.zIndex = 100
+    container.style.right = '33%'
+    container.style.left = '33%'
+    console.log 'new style=',container.style
+    document.body.appendChild container
+
     @currentSlot = 0
-
     @enable()
 
   enable: () ->
-    @toolbar.on 'select', @select = (slot) =>
-      @currentSlot = slot
-
-    @refresh()
-    @toolbar.el.style.visibility = ''
+    @inventoryWindow.container.style.visibility = ''
   
   disable: () ->
-    @toolbar.removeListener 'select', @select
-    @toolbar.el.style.visibility = 'hidden'  # TODO: option to "disable" in toolbar module, unbind events (num keys), hide..
+    @inventoryWindow.container.style.visibility = 'hidden'
 
   give: (itemPile) -> @inventory.give itemPile
   take: (itemPile) -> @inventory.take itemPile
@@ -41,24 +51,5 @@ class InventoryToolbar extends EventEmitter
   held: () ->
     @inventory.get @currentSlot
 
-  # update toolbar with inventory contents
   refresh: () ->
-    content = []
-    for i in [0...@inventorySize]
-      itemPile = @inventory.get(i)
-      if itemPile?
-        itemTexture = @registry.getItemProps(itemPile.item).itemTexture
-
-        # label is count if finite, or name (for creative mode) if infinite
-        if itemPile.count == Infinity
-          label = itemPile.item
-        else if itemPile.count == 1
-          label = ''
-        else
-          label = ''+itemPile.count
-
-        content.push {icon: @game.materials.texturePath + itemTexture + '.png', label:label, id:i}
-      else
-        content.push {id:i}
-
-    @toolbar.updateContent content
+    @inventoryWindow.refresh()

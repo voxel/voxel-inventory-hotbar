@@ -1,10 +1,10 @@
 {
-  "name": "voxel-inventory-toolbar",
-  "description": "connect an inventory to a toolbar (voxel.js plugin)",
+  "name": "voxel-inventory-hotbar",
+  "description": "a hotbar for player inventory (voxel.js plugin)",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git@github.com:deathcap/voxel-inventory-toolbar.git"
+    "url": "git@github.com:deathcap/voxel-inventory-hotbar.git"
   },
   "scripts": {
     "test": "node test.js"
@@ -12,7 +12,7 @@
   "dependencies": {
     "inventory": "git://github.com/deathcap/inventory.git",
     "itempile": "git://github.com/deathcap/itempile.git",
-    "toolbar": "git://github.com/deathcap/toolbar.git"
+    "inventory-window": "git://github.com/deathcap/inventory-window.git"
   },
   "devDependencies": {
   }
