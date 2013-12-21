@@ -21,15 +21,12 @@ class InventoryHotbar extends EventEmitter
       game.materials.texturePath + @registry.getItemProps(itemPile.item).itemTexture + '.png'
     @inventoryWindow = new InventoryWindow windowOpts
     container = @inventoryWindow.createContainer()
-    console.log 'old style=',container.style
 
     container.style.position = 'fixed'
     container.style.bottom = '0px'
-    # TODO: center better, see toolbar module CSS
-    container.style.zIndex = 100
+    container.style.zIndex = 5
     container.style.right = '33%'
     container.style.left = '33%'
-    console.log 'new style=',container.style
     document.body.appendChild container
 
     @currentSlot = 0

@@ -53,13 +53,11 @@
       }
       this.inventoryWindow = new InventoryWindow(windowOpts);
       container = this.inventoryWindow.createContainer();
-      console.log('old style=', container.style);
       container.style.position = 'fixed';
       container.style.bottom = '0px';
-      container.style.zIndex = 100;
+      container.style.zIndex = 5;
       container.style.right = '33%';
       container.style.left = '33%';
-      console.log('new style=', container.style);
       document.body.appendChild(container);
       this.currentSlot = 0;
       this.enable();
