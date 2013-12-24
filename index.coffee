@@ -43,8 +43,7 @@ class InventoryHotbar extends EventEmitter
         slot = ev.keyCode - '0'.charCodeAt(0) 
         if slot == 0
           slot = 10
-        else
-          slot -= 1
+        slot -= 1
         @inventoryWindow.setSelected(slot)
     ever(document.body).on 'keydown', @keydown
   

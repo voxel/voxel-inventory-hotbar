@@ -74,9 +74,8 @@
           slot = ev.keyCode - '0'.charCodeAt(0);
           if (slot === 0) {
             slot = 10;
-          } else {
-            slot -= 1;
           }
+          slot -= 1;
           return _this.inventoryWindow.setSelected(slot);
         }
       };
