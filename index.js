@@ -50,7 +50,7 @@
       }
       if (windowOpts.getTexture == null) {
         windowOpts.getTexture = (_ref5 = opts.getTexture) != null ? _ref5 : function(itemPile) {
-          return game.materials.texturePath + _this.registry.getItemProps(itemPile.item).itemTexture + '.png';
+          return _this.registry.getItemPileTexture(itemPile);
         };
       }
       this.inventoryWindow = new InventoryWindow(windowOpts);

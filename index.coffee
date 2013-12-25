@@ -18,8 +18,7 @@ class InventoryHotbar extends EventEmitter
     windowOpts.inventory ?= @inventory 
     windowOpts.inventorySize ?= opts.inventorySize ? @inventory.size()
     windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
-    windowOpts.getTexture ?= opts.getTexture ? (itemPile) =>
-      game.materials.texturePath + @registry.getItemProps(itemPile.item).itemTexture + '.png'
+    windowOpts.getTexture ?= opts.getTexture ? (itemPile) => @registry.getItemPileTexture(itemPile)
     @inventoryWindow = new InventoryWindow windowOpts
     @inventoryWindow.selectedIndex = 0
 
