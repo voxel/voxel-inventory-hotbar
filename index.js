@@ -18,8 +18,7 @@
     __extends(InventoryHotbar, _super);
 
     function InventoryHotbar(game, opts) {
-      var container, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5,
-        _this = this;
+      var container, windowOpts, _ref, _ref1, _ref2, _ref3;
       this.game = game;
       if (opts == null) {
         opts = {};
@@ -31,27 +30,15 @@
           throw 'voxel-inventory-hotbar requires "inventory" option set to inventory instance';
         }
       })();
-      this.registry = (function() {
-        if ((_ref1 = opts.registry) != null) {
-          return _ref1;
-        } else {
-          throw 'voxel-inventory-hotbar requires "registry" option set to voxel-registry instance';
-        }
-      })();
-      windowOpts = (_ref2 = opts.windowOpts) != null ? _ref2 : {};
+      windowOpts = (_ref1 = opts.windowOpts) != null ? _ref1 : {};
       if (windowOpts.inventory == null) {
         windowOpts.inventory = this.inventory;
       }
       if (windowOpts.inventorySize == null) {
-        windowOpts.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
+        windowOpts.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
       }
       if (windowOpts.width == null) {
-        windowOpts.width = (_ref4 = opts.width) != null ? _ref4 : windowOpts.inventorySize;
-      }
-      if (windowOpts.getTexture == null) {
-        windowOpts.getTexture = (_ref5 = opts.getTexture) != null ? _ref5 : function(itemPile) {
-          return _this.registry.getItemPileTexture(itemPile);
-        };
+        windowOpts.width = (_ref3 = opts.width) != null ? _ref3 : windowOpts.inventorySize;
       }
       this.inventoryWindow = new InventoryWindow(windowOpts);
       this.inventoryWindow.selectedIndex = 0;

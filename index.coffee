@@ -12,13 +12,11 @@ class InventoryHotbar extends EventEmitter
     opts ?= {}
 
     @inventory = opts.inventory ? throw 'voxel-inventory-hotbar requires "inventory" option set to inventory instance'
-    @registry = opts.registry ? throw 'voxel-inventory-hotbar requires "registry" option set to voxel-registry instance'
 
     windowOpts = opts.windowOpts ? {}
     windowOpts.inventory ?= @inventory 
     windowOpts.inventorySize ?= opts.inventorySize ? @inventory.size()
     windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
-    windowOpts.getTexture ?= opts.getTexture ? (itemPile) => @registry.getItemPileTexture(itemPile)
     @inventoryWindow = new InventoryWindow windowOpts
     @inventoryWindow.selectedIndex = 0
 
