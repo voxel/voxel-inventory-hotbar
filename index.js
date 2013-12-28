@@ -14,6 +14,10 @@
     return new InventoryHotbar(game, opts);
   };
 
+  module.exports.pluginInfo = {
+    loadAfter: ['voxel-carry']
+  };
+
   InventoryHotbar = (function(_super) {
     __extends(InventoryHotbar, _super);
 
@@ -24,10 +28,11 @@
         opts = {};
       }
       this.inventory = (function() {
-        if ((_ref = opts.inventory) != null) {
+        var _ref1, _ref2, _ref3;
+        if ((_ref = (_ref1 = (_ref2 = game.plugins) != null ? (_ref3 = _ref2.get('voxel-carry')) != null ? _ref3.inventory : void 0 : void 0) != null ? _ref1 : opts.inventory) != null) {
           return _ref;
         } else {
-          throw 'voxel-inventory-hotbar requires "inventory" option set to inventory instance';
+          throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance';
         }
       })();
       windowOpts = (_ref1 = opts.windowOpts) != null ? _ref1 : {};

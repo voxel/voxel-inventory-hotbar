@@ -7,11 +7,14 @@ ever = require 'ever'
 module.exports = (game, opts) ->
   new InventoryHotbar(game, opts)
 
+module.exports.pluginInfo =
+  loadAfter: ['voxel-carry']
+
 class InventoryHotbar extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
-    @inventory = opts.inventory ? throw 'voxel-inventory-hotbar requires "inventory" option set to inventory instance'
+    @inventory = game.plugins?.get('voxel-carry')?.inventory ? opts.inventory ? throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance'
 
     windowOpts = opts.windowOpts ? {}
     windowOpts.inventory ?= @inventory 
