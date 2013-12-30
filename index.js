@@ -15,14 +15,14 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-carry']
+    loadAfter: ['voxel-carry', 'voxel-registry']
   };
 
   InventoryHotbar = (function(_super) {
     __extends(InventoryHotbar, _super);
 
     function InventoryHotbar(game, opts) {
-      var container, windowOpts, _ref, _ref1, _ref2, _ref3;
+      var container, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4;
       this.game = game;
       if (opts == null) {
         opts = {};
@@ -35,15 +35,21 @@
           throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance';
         }
       })();
-      windowOpts = (_ref1 = opts.windowOpts) != null ? _ref1 : {};
+      registry = (_ref1 = game.plugins) != null ? _ref1.get('voxel-registry') : void 0;
+      windowOpts = (_ref2 = opts.windowOpts) != null ? _ref2 : {};
+      if (registry) {
+        if (windowOpts.registry == null) {
+          windowOpts.registry = registry;
+        }
+      }
       if (windowOpts.inventory == null) {
         windowOpts.inventory = this.inventory;
       }
       if (windowOpts.inventorySize == null) {
-        windowOpts.inventorySize = (_ref2 = opts.inventorySize) != null ? _ref2 : this.inventory.size();
+        windowOpts.inventorySize = (_ref3 = opts.inventorySize) != null ? _ref3 : this.inventory.size();
       }
       if (windowOpts.width == null) {
-        windowOpts.width = (_ref3 = opts.width) != null ? _ref3 : windowOpts.inventorySize;
+        windowOpts.width = (_ref4 = opts.width) != null ? _ref4 : windowOpts.inventorySize;
       }
       this.inventoryWindow = new InventoryWindow(windowOpts);
       this.inventoryWindow.selectedIndex = 0;

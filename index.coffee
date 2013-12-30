@@ -8,15 +8,17 @@ module.exports = (game, opts) ->
   new InventoryHotbar(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-carry']
+  loadAfter: ['voxel-carry', 'voxel-registry']
 
 class InventoryHotbar extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
     @inventory = game.plugins?.get('voxel-carry')?.inventory ? opts.inventory ? throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance'
+    registry = game.plugins?.get('voxel-registry')
 
     windowOpts = opts.windowOpts ? {}
+    windowOpts.registry ?= registry if registry
     windowOpts.inventory ?= @inventory 
     windowOpts.inventorySize ?= opts.inventorySize ? @inventory.size()
     windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
