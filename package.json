@@ -2,18 +2,25 @@
   "name": "voxel-inventory-hotbar",
   "description": "a hotbar for player inventory (voxel.js plugin)",
   "version": "0.0.1",
+  "keywords": [
+    "voxel",
+    "inventory",
+    "hotbar"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/voxel-inventory-hotbar.git"
   },
-  "scripts": {
-    "test": "node test.js"
-  },
   "dependencies": {
-    "inventory": "git://github.com/deathcap/inventory.git",
-    "itempile": "git://github.com/deathcap/itempile.git",
-    "inventory-window": "git://github.com/deathcap/inventory-window.git",
+    "inventory": "~0.1.0",
+    "itempile": "~0.1.1",
+    "inventory-window": "~0.1.0",
     "ever": "0.0.3"
   },
-  "devDependencies": {}
+  "peerDependencies": {
+    "voxel-plugins": ">=0.1.0",
+    "voxel-carry": ">=0.1.0",
+    "voxel-registry": ">=0.1.0"
+  },
+  "license": "MIT"
 }
