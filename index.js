@@ -80,7 +80,7 @@
       var container, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       this.game = game;
       InventoryHotbarClient.__super__.constructor.call(this, this.game, opts);
-      this.wheelEnable = (_ref = opts.wheelEnable) != null ? _ref : true;
+      this.wheelEnable = (_ref = opts.wheelEnable) != null ? _ref : false;
       this.wheelScale = (_ref1 = opts.wheelScale) != null ? _ref1 : 1.0;
       registry = (_ref2 = game.plugins) != null ? _ref2.get('voxel-registry') : void 0;
       windowOpts = (_ref3 = opts.windowOpts) != null ? _ref3 : {};

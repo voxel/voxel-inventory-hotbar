@@ -41,7 +41,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
   constructor: (@game, opts) ->
     super @game, opts
 
-    @wheelEnable = opts.wheelEnable ? true # enable scroll wheel to change slots?
+    @wheelEnable = opts.wheelEnable ? false # enable scroll wheel to change slots?
     @wheelScale = opts.wheelScale ? 1.0  # mouse wheel scrolling sensitivity
 
     registry = game.plugins?.get('voxel-registry')
