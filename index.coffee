@@ -62,21 +62,45 @@ class InventoryHotbarClient extends InventoryHotbarCommon
   enable: () ->
     @inventoryWindow.container.style.visibility = ''
 
-    @keydown = (ev) =>   # TODO: disable when gui open? (or use kb-bindings../interact)
-      if '0'.charCodeAt(0) <= ev.keyCode <= '9'.charCodeAt(0)
-        slot = ev.keyCode - '0'.charCodeAt(0) 
-        if slot == 0
-          slot = 10
-        slot -= 1
-        @selectedIndex = slot
-        @inventoryWindow.setSelected(@selectedIndex)
-    ever(document.body).on 'keydown', @keydown
+    if @game.buttons.bindings? # kb-bindings available, configurable bindings
+      [0..9].forEach (slot) =>
+        # key numeric 1 is slot 0th, 2 is 1st, .. 0 is last
+        if slot == 9
+          key = '0'
+        else
+          key = ''+(slot + 1)
+
+        # human-readable keybinding name (1-based)
+        slotName = 'slot' + (slot + 1)
+
+        @game.buttons.bindings[key] = slotName
+        @onSlots = {}
+        @game.buttons.down.on slotName, @onSlots[key] = () =>
+          @selectedIndex = slot
+          @inventoryWindow.setSelected @selectedIndex
+
+    else  # fallback kb-controls support
+      @keydown = (ev) =>   # note: doesn't disable when gui open - above does
+        if '0'.charCodeAt(0) <= ev.keyCode <= '9'.charCodeAt(0)
+          slot = ev.keyCode - '0'.charCodeAt(0)
+          if slot == 0
+            slot = 10
+          slot -= 1
+          @selectedIndex = slot
+          @inventoryWindow.setSelected @selectedIndex
+      ever(document.body).on 'keydown', @keydown
 
     super()
   
   disable: () ->
     @inventoryWindow.container.style.visibility = 'hidden'
-    ever(document.body).removeListener 'keydown', @keydown
+
+    if @game.buttons.bindings?
+      for key in [1..10]
+        delete @game.buttons.bindings[key - 1]
+        @game.buttons.down.removeListener 'slot' + key, @onSlots[key]
+    else
+      ever(document.body).removeListener 'keydown', @keydown
 
     super()
 
