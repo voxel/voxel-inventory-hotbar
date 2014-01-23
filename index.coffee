@@ -13,6 +13,9 @@ module.exports = (game, opts) ->
 module.exports.pluginInfo =
   loadAfter: ['voxel-carry', 'voxel-registry']
 
+# a more sensible modulo via http://livescript.net/ - "%% operator (and corresponding %%= operator), x %% y is (x % y + y) % y. Eg. -3 % 4 == -3; -3 %% 4 == 1. Rationale: this is how the % op behaves in other languages such as Python and Ruby."
+properModulo = (x, y) -> (x % y + y) % y
+
 class InventoryHotbarCommon extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
@@ -38,6 +41,9 @@ class InventoryHotbarClient extends InventoryHotbarCommon
   constructor: (@game, opts) ->
     super @game, opts
 
+    @wheelEnable = opts.wheelEnable ? true # enable scroll wheel to change slots?
+    @wheelScale = opts.wheelScale ? 1.0  # mouse wheel scrolling sensitivity
+
     registry = game.plugins?.get('voxel-registry')
     windowOpts = opts.windowOpts ? {}
     windowOpts.registry ?= registry if registry
@@ -61,6 +67,17 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
   enable: () ->
     @inventoryWindow.container.style.visibility = ''
+
+    if @wheelEnable
+      ever(document.body).on 'mousewheel', @mousewheel = (ev) => # TODO: also DOMScrollWheel for Firefox
+        console.log 'mousewheel',ev
+        delta = ev.wheelDelta
+        delta /= @wheelScale
+        delta = Math.floor delta
+        @selectedIndex += delta
+        @selectedIndex = properModulo(@selectedIndex, @inventoryWindow.width)
+        console.log @selectedIndex
+        @inventoryWindow.setSelected @selectedIndex
 
     if @game.buttons.bindings? # kb-bindings available, configurable bindings
       [0..9].forEach (slot) =>
@@ -94,6 +111,8 @@ class InventoryHotbarClient extends InventoryHotbarCommon
   
   disable: () ->
     @inventoryWindow.container.style.visibility = 'hidden'
+
+    ever(document.body).removeListener 'mousewheel', @mousewheel if @mousewheel?
 
     if @game.buttons.bindings?
       for key in [1..10]
