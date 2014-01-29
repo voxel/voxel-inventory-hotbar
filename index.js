@@ -109,6 +109,7 @@
 
     InventoryHotbarClient.prototype.enable = function() {
       this.inventoryWindow.container.style.visibility = '';
+      this.onSlots = {};
       if (this.wheelEnable) {
         ever(document.body).on('mousewheel', this.mousewheel = (function(_this) {
           return function(ev) {
@@ -135,7 +136,6 @@
             }
             slotName = 'slot' + (slot + 1);
             _this.game.buttons.bindings[key] = slotName;
-            _this.onSlots = {};
             return _this.game.buttons.down.on(slotName, _this.onSlots[key] = function() {
               _this.selectedIndex = slot;
               return _this.inventoryWindow.setSelected(_this.selectedIndex);
@@ -171,7 +171,7 @@
       if (this.game.buttons.bindings != null) {
         for (key = _i = 1; _i <= 10; key = ++_i) {
           delete this.game.buttons.bindings[key - 1];
-          this.game.buttons.down.removeListener('slot' + key, this.onSlots[key]);
+          this.game.buttons.down.removeListener('slot' + key, this.onSlots[key - 1]);
         }
       } else {
         ever(document.body).removeListener('keydown', this.keydown);

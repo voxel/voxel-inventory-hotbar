@@ -64,6 +64,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
   enable: () ->
     @inventoryWindow.container.style.visibility = ''
+    @onSlots = {}
 
     if @wheelEnable
       ever(document.body).on 'mousewheel', @mousewheel = (ev) => # TODO: also DOMScrollWheel for Firefox
@@ -88,7 +89,6 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         slotName = 'slot' + (slot + 1)
 
         @game.buttons.bindings[key] = slotName
-        @onSlots = {}
         @game.buttons.down.on slotName, @onSlots[key] = () =>
           @selectedIndex = slot
           @inventoryWindow.setSelected @selectedIndex
@@ -114,7 +114,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
     if @game.buttons.bindings?
       for key in [1..10]
         delete @game.buttons.bindings[key - 1]
-        @game.buttons.down.removeListener 'slot' + key, @onSlots[key]
+        @game.buttons.down.removeListener 'slot' + key, @onSlots[key - 1]
     else
       ever(document.body).removeListener 'keydown', @keydown
 
