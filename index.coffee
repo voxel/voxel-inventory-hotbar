@@ -13,9 +13,6 @@ module.exports = (game, opts) ->
 module.exports.pluginInfo =
   loadAfter: ['voxel-carry', 'voxel-registry']
 
-# a more sensible modulo via http://livescript.net/ - "%% operator (and corresponding %%= operator), x %% y is (x % y + y) % y. Eg. -3 % 4 == -3; -3 %% 4 == 1. Rationale: this is how the % op behaves in other languages such as Python and Ruby."
-properModulo = (x, y) -> (x % y + y) % y
-
 class InventoryHotbarCommon extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
@@ -75,7 +72,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         delta /= @wheelScale
         delta = Math.floor delta
         @selectedIndex += delta
-        @selectedIndex = properModulo(@selectedIndex, @inventoryWindow.width)
+        @selectedIndex = @selectedIndex %% @inventoryWindow.width
         console.log @selectedIndex
         @inventoryWindow.setSelected @selectedIndex
 
