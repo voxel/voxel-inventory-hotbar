@@ -53,12 +53,19 @@ class InventoryHotbarClient extends InventoryHotbarCommon
     container = @inventoryWindow.createContainer()
 
     # center at bottom of screen
-    container.style.position = 'fixed'
     container.style.bottom = '0px'
     container.style.zIndex = 5
-    container.style.right = '33%'
-    container.style.left = '33%'
-    document.body.appendChild container
+    container.style.width = '100%'
+    container.style.position = 'fixed'
+    container.style.float = ''
+    container.style.border = ''  # not tight around edges
+
+    outerDiv = document.createElement 'div'
+    outerDiv.style.width = '100%'
+    outerDiv.style.textAlign = 'center'
+    outerDiv.appendChild container
+
+    document.body.appendChild outerDiv
 
     @enable()
 

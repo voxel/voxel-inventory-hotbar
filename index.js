@@ -74,7 +74,7 @@
     __extends(InventoryHotbarClient, _super);
 
     function InventoryHotbarClient(game, opts) {
-      var container, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+      var container, outerDiv, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       this.game = game;
       InventoryHotbarClient.__super__.constructor.call(this, this.game, opts);
       this.wheelEnable = (_ref = opts.wheelEnable) != null ? _ref : false;
@@ -98,12 +98,17 @@
       this.inventoryWindow = new InventoryWindow(windowOpts);
       this.inventoryWindow.selectedIndex = 0;
       container = this.inventoryWindow.createContainer();
-      container.style.position = 'fixed';
       container.style.bottom = '0px';
       container.style.zIndex = 5;
-      container.style.right = '33%';
-      container.style.left = '33%';
-      document.body.appendChild(container);
+      container.style.width = '100%';
+      container.style.position = 'fixed';
+      container.style.float = '';
+      container.style.border = '';
+      outerDiv = document.createElement('div');
+      outerDiv.style.width = '100%';
+      outerDiv.style.textAlign = 'center';
+      outerDiv.appendChild(container);
+      document.body.appendChild(outerDiv);
       this.enable();
     }
 
