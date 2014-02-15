@@ -37,7 +37,7 @@
         if ((_ref = (_ref1 = (_ref2 = game.plugins) != null ? (_ref3 = _ref2.get('voxel-carry')) != null ? _ref3.inventory : void 0 : void 0) != null ? _ref1 : opts.inventory) != null) {
           return _ref;
         } else {
-          throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance';
+          throw new Error('voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance');
         }
       })();
       this.selectedIndex = 0;

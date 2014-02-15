@@ -17,7 +17,7 @@ class InventoryHotbarCommon extends EventEmitter
   constructor: (@game, opts) ->
     opts ?= {}
 
-    @inventory = game.plugins?.get('voxel-carry')?.inventory ? opts.inventory ? throw 'voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance'
+    @inventory = game.plugins?.get('voxel-carry')?.inventory ? opts.inventory ? throw new Error('voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance')
     @selectedIndex = 0
 
   enable: () ->
