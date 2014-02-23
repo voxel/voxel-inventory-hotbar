@@ -62,6 +62,10 @@
       return this.inventory.takeAt(this.selectedIndex, count);
     };
 
+    InventoryHotbarCommon.prototype.replaceHeld = function(itemPile) {
+      return this.inventory.set(this.selectedIndex, itemPile);
+    };
+
     InventoryHotbarCommon.prototype.held = function() {
       return this.inventory.get(this.selectedIndex);
     };

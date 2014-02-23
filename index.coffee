@@ -30,6 +30,9 @@ class InventoryHotbarCommon extends EventEmitter
   # take some items from the pile the player is currently holding
   takeHeld: (count=1) -> @inventory.takeAt @selectedIndex, count
 
+  # completely replace held item pile
+  replaceHeld: (itemPile) -> @inventory.set @selectedIndex, itemPile
+
   # get the pile of items the player is currently holding
   held: () ->
     @inventory.get @selectedIndex
