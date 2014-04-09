@@ -20,7 +20,7 @@
   };
 
   module.exports.pluginInfo = {
-    loadAfter: ['voxel-carry', 'voxel-registry']
+    loadAfter: ['voxel-carry', 'voxel-registry', 'voxel-keys']
   };
 
   InventoryHotbarCommon = (function(_super) {
@@ -78,13 +78,20 @@
     __extends(InventoryHotbarClient, _super);
 
     function InventoryHotbarClient(game, opts) {
-      var container, outerDiv, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+      var container, outerDiv, registry, windowOpts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
       this.game = game;
       InventoryHotbarClient.__super__.constructor.call(this, this.game, opts);
-      this.wheelEnable = (_ref = opts.wheelEnable) != null ? _ref : false;
-      this.wheelScale = (_ref1 = opts.wheelScale) != null ? _ref1 : 1.0;
-      registry = (_ref2 = game.plugins) != null ? _ref2.get('voxel-registry') : void 0;
-      windowOpts = (_ref3 = opts.windowOpts) != null ? _ref3 : {};
+      this.keys = (function() {
+        if ((_ref = game.plugins.get('voxel-keys')) != null) {
+          return _ref;
+        } else {
+          throw new Error('voxel-inventory-hotbar requires voxel-keys plugin');
+        }
+      })();
+      this.wheelEnable = (_ref1 = opts.wheelEnable) != null ? _ref1 : false;
+      this.wheelScale = (_ref2 = opts.wheelScale) != null ? _ref2 : 1.0;
+      registry = (_ref3 = game.plugins) != null ? _ref3.get('voxel-registry') : void 0;
+      windowOpts = (_ref4 = opts.windowOpts) != null ? _ref4 : {};
       if (registry) {
         if (windowOpts.registry == null) {
           windowOpts.registry = registry;
@@ -94,10 +101,10 @@
         windowOpts.inventory = this.inventory;
       }
       if (windowOpts.inventorySize == null) {
-        windowOpts.inventorySize = (_ref4 = opts.inventorySize) != null ? _ref4 : this.inventory.size();
+        windowOpts.inventorySize = (_ref5 = opts.inventorySize) != null ? _ref5 : this.inventory.size();
       }
       if (windowOpts.width == null) {
-        windowOpts.width = (_ref5 = opts.width) != null ? _ref5 : windowOpts.inventorySize;
+        windowOpts.width = (_ref6 = opts.width) != null ? _ref6 : windowOpts.inventorySize;
       }
       this.inventoryWindow = new InventoryWindow(windowOpts);
       this.inventoryWindow.selectedIndex = 0;
@@ -145,7 +152,7 @@
             }
             slotName = 'slot' + (slot + 1);
             _this.game.buttons.bindings[key] = slotName;
-            return _this.game.buttons.down.on(slotName, _this.onSlots[key] = function() {
+            return _this.keys.down.on(slotName, _this.onSlots[key] = function() {
               _this.selectedIndex = slot;
               return _this.inventoryWindow.setSelected(_this.selectedIndex);
             });
@@ -180,7 +187,7 @@
       if (this.game.buttons.bindings != null) {
         for (key = _i = 1; _i <= 10; key = ++_i) {
           delete this.game.buttons.bindings[key - 1];
-          this.game.buttons.down.removeListener('slot' + key, this.onSlots[key - 1]);
+          this.keys.down.removeListener('slot' + key, this.onSlots[key - 1]);
         }
       } else {
         ever(document.body).removeListener('keydown', this.keydown);

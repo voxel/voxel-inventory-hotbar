@@ -11,7 +11,7 @@ module.exports = (game, opts) ->
     new InventoryHotbarCommon game, opts
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-carry', 'voxel-registry']
+  loadAfter: ['voxel-carry', 'voxel-registry', 'voxel-keys']
 
 class InventoryHotbarCommon extends EventEmitter
   constructor: (@game, opts) ->
@@ -41,6 +41,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
   constructor: (@game, opts) ->
     super @game, opts
 
+    @keys = game.plugins.get('voxel-keys') ? throw new Error('voxel-inventory-hotbar requires voxel-keys plugin')
     @wheelEnable = opts.wheelEnable ? false # enable scroll wheel to change slots?
     @wheelScale = opts.wheelScale ? 1.0  # mouse wheel scrolling sensitivity
 
@@ -87,7 +88,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         console.log @selectedIndex
         @inventoryWindow.setSelected @selectedIndex
 
-    if @game.buttons.bindings? # kb-bindings available, configurable bindings
+    if @game.buttons.bindings? # kb-bindings available, configurable bindings TODO: add compatibility with game-shell
       [0..9].forEach (slot) =>
         # key numeric 1 is slot 0th, 2 is 1st, .. 0 is last
         if slot == 9
@@ -98,8 +99,8 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         # human-readable keybinding name (1-based)
         slotName = 'slot' + (slot + 1)
 
-        @game.buttons.bindings[key] = slotName
-        @game.buttons.down.on slotName, @onSlots[key] = () =>
+        @game.buttons.bindings[key] = slotName # TODO: game-shell
+        @keys.down.on slotName, @onSlots[key] = () =>
           @selectedIndex = slot
           @inventoryWindow.setSelected @selectedIndex
 
@@ -121,10 +122,10 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
     ever(document.body).removeListener 'mousewheel', @mousewheel if @mousewheel?
 
-    if @game.buttons.bindings?
+    if @game.buttons.bindings? # TODO: game-shell
       for key in [1..10]
         delete @game.buttons.bindings[key - 1]
-        @game.buttons.down.removeListener 'slot' + key, @onSlots[key - 1]
+        @keys.down.removeListener 'slot' + key, @onSlots[key - 1]
     else
       ever(document.body).removeListener 'keydown', @keydown
 
