@@ -2,7 +2,7 @@
 
 Adds a hotbar to view and select a subset of player inventory (voxel.js plugin):
 
-![screenshot](http://i.imgur.com/p7fFP0M.png "Screenshot")
+![screenshot](http://i.imgur.com/hWzQyIs.png "Screenshot")
 
 Requires:
 
