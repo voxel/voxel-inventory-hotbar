@@ -141,7 +141,7 @@
           };
         })(this));
       }
-      if (this.game.buttons.bindings != null) {
+      if ((this.game.shell != null) || (this.game.buttons.bindings != null)) {
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((function(_this) {
           return function(slot) {
             var key, slotName;
@@ -151,7 +151,11 @@
               key = '' + (slot + 1);
             }
             slotName = 'slot' + (slot + 1);
-            _this.game.buttons.bindings[key] = slotName;
+            if (_this.game.shell != null) {
+              _this.game.shell.bind(slotName, key);
+            } else if (_this.game.buttons.bindings != null) {
+              _this.game.buttons.bindings[key] = slotName;
+            }
             return _this.keys.down.on(slotName, _this.onSlots[key] = function() {
               _this.selectedIndex = slot;
               return _this.inventoryWindow.setSelected(_this.selectedIndex);
@@ -179,13 +183,18 @@
     };
 
     InventoryHotbarClient.prototype.disable = function() {
-      var key, _i;
+      var key, _i, _j;
       this.inventoryWindow.container.style.visibility = 'hidden';
       if (this.mousewheel != null) {
         ever(document.body).removeListener('mousewheel', this.mousewheel);
       }
-      if (this.game.buttons.bindings != null) {
+      if (this.game.shell != null) {
         for (key = _i = 1; _i <= 10; key = ++_i) {
+          this.game.shell.unbind('slot' + key);
+          this.keys.down.removeListener('slot' + key, this.onSlots[key - 1]);
+        }
+      } else if (this.game.buttons.bindings != null) {
+        for (key = _j = 1; _j <= 10; key = ++_j) {
           delete this.game.buttons.bindings[key - 1];
           this.keys.down.removeListener('slot' + key, this.onSlots[key - 1]);
         }

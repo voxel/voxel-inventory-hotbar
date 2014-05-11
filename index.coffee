@@ -88,7 +88,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         console.log @selectedIndex
         @inventoryWindow.setSelected @selectedIndex
 
-    if @game.buttons.bindings? # kb-bindings available, configurable bindings TODO: add compatibility with game-shell
+    if @game.shell? or @game.buttons.bindings? # configurable bindings available
       [0..9].forEach (slot) =>
         # key numeric 1 is slot 0th, 2 is 1st, .. 0 is last
         if slot == 9
@@ -99,7 +99,11 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         # human-readable keybinding name (1-based)
         slotName = 'slot' + (slot + 1)
 
-        @game.buttons.bindings[key] = slotName # TODO: game-shell
+        if @game.shell?
+          @game.shell.bind slotName, key
+        else if @game.buttons.bindings?
+          @game.buttons.bindings[key] = slotName
+
         @keys.down.on slotName, @onSlots[key] = () =>
           @selectedIndex = slot
           @inventoryWindow.setSelected @selectedIndex
@@ -122,7 +126,11 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
     ever(document.body).removeListener 'mousewheel', @mousewheel if @mousewheel?
 
-    if @game.buttons.bindings? # TODO: game-shell
+    if @game.shell?
+      for key in [1..10]
+        @game.shell.unbind 'slot' + key
+        @keys.down.removeListener 'slot' + key, @onSlots[key - 1]
+    else if @game.buttons.bindings?
       for key in [1..10]
         delete @game.buttons.bindings[key - 1]
         @keys.down.removeListener 'slot' + key, @onSlots[key - 1]
