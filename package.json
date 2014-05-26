@@ -2,8 +2,10 @@
   "name": "voxel-inventory-hotbar",
   "description": "a hotbar for player inventory (voxel.js plugin)",
   "version": "0.4.0",
+  "main": "hotbar.coffee",
   "keywords": [
     "voxel",
+    "plugin",
     "inventory",
     "hotbar"
   ],
@@ -12,10 +14,13 @@
     "url": "git@github.com:deathcap/voxel-inventory-hotbar.git"
   },
   "dependencies": {
-    "inventory": "~0.1.1",
-    "itempile": "~0.2.1",
+    "inventory": "^0.1.2",
+    "itempile": "^0.2.2",
     "inventory-window": "^0.3.0",
     "ever": "0.0.3"
+  },
+  "browserify": {
+    "transform": [ "coffeeify" ]
   },
   "license": "MIT"
 }
