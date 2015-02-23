@@ -14,10 +14,11 @@
     "url": "git@github.com:deathcap/voxel-inventory-hotbar.git"
   },
   "dependencies": {
-    "inventory": "^0.1.2",
-    "itempile": "^0.2.2",
-    "inventory-window": "^0.3.0",
-    "ever": "0.0.3"
+    "coffeeify": "^1.0.0",
+    "ever": "0.0.3",
+    "inventory": "^1.0.0",
+    "inventory-window": "^1.0.0",
+    "itempile": "^1.0.1"
   },
   "browserify": {
     "transform": [
