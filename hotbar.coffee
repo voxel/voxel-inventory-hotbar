@@ -78,6 +78,14 @@ class InventoryHotbarClient extends InventoryHotbarCommon
     @enable()
 
   setSelectedIndex: (x) ->
+    event =
+      oldIndex: @selectedIndex
+      newIndex:x
+      cancelled:false
+
+    @emit 'selectionChanging', event
+    return if event.cancelled
+
     @inventoryWindow.setSelected x
     super(x)
 
