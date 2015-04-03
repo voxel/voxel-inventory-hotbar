@@ -37,6 +37,9 @@ class InventoryHotbarCommon extends EventEmitter
   held: () ->
     @inventory.get @selectedIndex
 
+  setSelectedIndex: (x) ->
+    @selectedIndex = x
+
 class InventoryHotbarClient extends InventoryHotbarCommon
   constructor: (@game, opts) ->
     super @game, opts
@@ -53,6 +56,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
     windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
     @inventoryWindow = new InventoryWindow windowOpts
     @inventoryWindow.selectedIndex = 0
+    #@setSelectedIndex 0 # can't set this early; requires DOM
 
     container = @inventoryWindow.createContainer()
 
@@ -73,6 +77,10 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
     @enable()
 
+  setSelectedIndex: (x) ->
+    @inventoryWindow.setSelected x
+    super(x)
+
   enable: () ->
     @inventoryWindow.container.style.visibility = ''
     @onSlots = {}
@@ -83,10 +91,10 @@ class InventoryHotbarClient extends InventoryHotbarCommon
         delta = ev.wheelDelta
         delta /= @wheelScale
         delta = Math.floor delta
-        @selectedIndex += delta
-        @selectedIndex = @selectedIndex %% @inventoryWindow.width
-        console.log @selectedIndex
-        @inventoryWindow.setSelected @selectedIndex
+        newSlot = @selectedIndex + delta
+        newSlot = newSlot %% @inventoryWindow.width
+        console.log newSlot
+        @setSelectedIndex newSlot
 
     if @game.shell? or @game.buttons.bindings? # configurable bindings available
       [0..9].forEach (slot) =>
@@ -105,8 +113,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
           @game.buttons.bindings[key] = slotName
 
         @keys.down.on slotName, @onSlots[key] = () =>
-          @selectedIndex = slot
-          @inventoryWindow.setSelected @selectedIndex
+          @setSelectedIndex slot
 
     else  # fallback kb-controls support
       @keydown = (ev) =>   # note: doesn't disable when gui open - above does
@@ -115,8 +122,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
           if slot == 0
             slot = 10
           slot -= 1
-          @selectedIndex = slot
-          @inventoryWindow.setSelected @selectedIndex
+          @setSelectedIndex slot
       ever(document.body).on 'keydown', @keydown
 
     super()
