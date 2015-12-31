@@ -46,7 +46,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
     @keys = game.plugins.get('voxel-keys') ? throw new Error('voxel-inventory-hotbar requires voxel-keys plugin')
     @wheelEnable = opts.wheelEnable ? false # enable scroll wheel to change slots?
-    @wheelScale = opts.wheelScale ? 1.0  # mouse wheel scrolling sensitivity
+    @wheelScale = opts.wheelScale ? 120  # mouse wheel scrolling sensitivity
 
     registry = game.plugins?.get('voxel-registry')
     windowOpts = opts.windowOpts ? {}
