@@ -135,7 +135,6 @@ class InventoryHotbarClient extends InventoryHotbarCommon
       ever(document.body).on 'keydown', @keydown
 
     super()
-    
   disable: () ->
     @inventoryWindow.container.style.visibility = 'hidden'
 
