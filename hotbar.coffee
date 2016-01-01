@@ -95,6 +95,7 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
     if @wheelEnable
       ever(document.body).on 'mousewheel', @mousewheel = (ev) => # TODO: also DOMScrollWheel for Firefox
+      if @game.shell.pointerLock
         console.log 'mousewheel',ev
         delta = ev.wheelDelta
         delta /= @wheelScale
@@ -134,7 +135,6 @@ class InventoryHotbarClient extends InventoryHotbarCommon
       ever(document.body).on 'keydown', @keydown
 
     super()
-  
   disable: () ->
     @inventoryWindow.container.style.visibility = 'hidden'
 
@@ -155,5 +155,3 @@ class InventoryHotbarClient extends InventoryHotbarCommon
 
   refresh: () ->
     @inventoryWindow.refresh()
-
-
