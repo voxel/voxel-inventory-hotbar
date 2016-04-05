@@ -1,159 +1,203 @@
-# vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
+'use strict';
 
-EventEmitter = (require 'events').EventEmitter
-InventoryWindow = require 'inventory-window'
-ever = require 'ever'
+const EventEmitter = require('events').EventEmitter;
+const InventoryWindow = require('inventory-window');
+const ever = require('ever');
 
-module.exports = (game, opts) ->
-  if game.isClient
-    new InventoryHotbarClient game, opts
-  else
-    new InventoryHotbarCommon game, opts
+module.exports = (game, opts) => {
+  if (game.isClient) {
+    return new InventoryHotbarClient(game, opts);
+  } else {
+    return new InventoryHotbarCommon(game, opts);
+  }
+};
 
-module.exports.pluginInfo =
+module.exports.pluginInfo = {
   loadAfter: ['voxel-carry', 'voxel-registry', 'voxel-keys']
+};
 
-class InventoryHotbarCommon extends EventEmitter
-  constructor: (@game, opts) ->
-    opts ?= {}
+class InventoryHotbarCommon extends EventEmitter {
+  constructor(game, opts) {
+    super();
+    this.game = game;;
 
-    @inventory = game.plugins?.get('voxel-carry')?.inventory ? opts.inventory ? throw new Error('voxel-inventory-hotbar requires "voxel-carry" plugin or "inventory" option set to inventory instance')
-    @selectedIndex = 0
+    if (!opts) opts = {};
 
-  enable: () ->
+    this.inventory = game.plugins.get('voxel-carry').inventory || opts.playerInventory; // TODO: proper error if voxel-carry missing
+    if (!this.inventory ) throw new Error('voxel-inventory-dialog requires "voxel-carry" plugin or playerInventory" set to inventory instance');
 
-  disable: () ->
+    this.selectedIndex = 0;
+  }
 
-  give: (itemPile) -> @inventory.give itemPile
-  take: (itemPile) -> @inventory.take itemPile
+  enable() {
+  }
 
-  # take some items from the pile the player is currently holding
-  takeHeld: (count=1) -> @inventory.takeAt @selectedIndex, count
+  disable() {
+  }
 
-  # completely replace held item pile
-  replaceHeld: (itemPile) -> @inventory.set @selectedIndex, itemPile
+  give(itemPile){
+    return this.inventory.give(itemPile);
+  }
 
-  # get the pile of items the player is currently holding
-  held: () ->
-    @inventory.get @selectedIndex
+  take(itemPile) {
+    return this.inventory.take(itemPile);
+  }
 
-  setSelectedIndex: (x) ->
-    @selectedIndex = x
+  // take some items from the pile the player is currently holding
+  takeHeld() {
+    if (count === undefined) count = 1;
+    return this.inventory.takeAt(this.selectedIndex, count);
+  }
 
-class InventoryHotbarClient extends InventoryHotbarCommon
-  constructor: (@game, opts) ->
-    super @game, opts
+  // completely replace held item pile
+  replaceHeld(itemPile) {
+    return this.inventory.set(this.selectedIndex, itemPile);
+  }
 
-    @keys = game.plugins.get('voxel-keys') ? throw new Error('voxel-inventory-hotbar requires voxel-keys plugin')
-    @wheelEnable = opts.wheelEnable ? false # enable scroll wheel to change slots?
-    @wheelScale = opts.wheelScale ? 1.0  # mouse wheel scrolling sensitivity
+  // get the pile of items the player is currently holding
+  held() {
+    return this.inventory.get(this.selectedIndex);
+  }
 
-    registry = game.plugins?.get('voxel-registry')
-    windowOpts = opts.windowOpts ? {}
-    windowOpts.registry ?= registry if registry
-    windowOpts.inventory ?= @inventory
-    windowOpts.inventorySize ?= opts.inventorySize ? @inventory.size()
-    windowOpts.width ?= opts.width ? windowOpts.inventorySize   # default to one row
-    @inventoryWindow = new InventoryWindow windowOpts
-    @inventoryWindow.selectedIndex = 0
-    #@setSelectedIndex 0 # can't set this early; requires DOM
+  setSelectedIndex(x) {
+    this.selectedIndex = x;
+  }
+}
 
-    container = @inventoryWindow.createContainer()
+class InventoryHotbarClient extends InventoryHotbarCommon {
+  constructor(game, opts) {
+    super(game, opts);
 
-    # center at bottom of screen
-    container.style.bottom = '0px'
-    container.style.zIndex = 5
-    container.style.width = '100%'
-    container.style.position = 'fixed'
-    container.style.float = ''
-    container.style.border = ''  # not tight around edges
+    this.game = game;
 
-    outerDiv = document.createElement 'div'
-    outerDiv.style.width = '100%'
-    outerDiv.style.textAlign = 'center'
-    outerDiv.appendChild container
+    this.keys = game.plugins.get('voxel-keys');
+    if (!this.keys) throw new Error('voxel-inventory-hotbar requires voxel-keys plugin');
 
-    document.body.appendChild outerDiv
+    this.wheelEnable = opts.wheelEnable !== undefined ? opts.wheelEnable : false; // enable scroll wheel to change slots?
+    this.wheelScale = opts.wheelScale !== undefined ? opts.wheelScale : 1.0;  // mouse wheel scrolling sensitivity
 
-    @enable()
+    const registry = game.plugins.get('voxel-registry');
+    const windowOpts = opts.windowOpts !== undefined ? opts.windowOpts : {};
+    if (!windowOpts.registry && registry) windowOpts.registry = registry;
+    if (!windowOpts.inventory) windowOpts.inventory = this.inventory;
 
-  setSelectedIndex: (x) ->
-    event =
-      oldIndex: @selectedIndex
-      newIndex:x
-      cancelled:false
+    if (windowOpts.inventorySize === undefined) windowOpts.inventorySize = opts.inventorySize;
+    if (windowOpts.inventorySize === undefined) windowOpts.inventorySize = this.inventory.size();
 
-    @emit 'selectionChanging', event
-    return if event.cancelled
+    if (windowOpts.width === undefined) windowOpts.width = opts.width;
+    if (windowOpts.width === undefined) windowOpts.width = windowOpts.inventorySize; // default to one row
 
-    @inventoryWindow.setSelected x
-    super(x)
+    this.inventoryWindow = new InventoryWindow(windowOpts);
+    this.inventoryWindow.selectedIndex = 0;
+    //this.setSelectedIndex(0); // can't set this early; requires DOM
 
-  enable: () ->
-    @inventoryWindow.container.style.visibility = ''
-    @onSlots = {}
+    const container = this.inventoryWindow.createContainer();
 
-    if @wheelEnable
-      ever(document.body).on 'mousewheel', @mousewheel = (ev) => # TODO: also DOMScrollWheel for Firefox
-        console.log 'mousewheel',ev
-        delta = ev.wheelDelta
-        delta /= @wheelScale
-        delta = Math.floor delta
-        newSlot = @selectedIndex + delta
-        newSlot = newSlot %% @inventoryWindow.width
-        console.log newSlot
-        @setSelectedIndex newSlot
+    // center at bottom of screen
+    container.style.bottom = '0px';
+    container.style.zIndex = 5;
+    container.style.width = '100%';
+    container.style.position = 'fixed';
+    container.style.float = '';
+    container.style.border = '';  // not tight around edges
 
-    if @game.shell? or @game.buttons.bindings? # configurable bindings available
-      [0..9].forEach (slot) =>
-        # key numeric 1 is slot 0th, 2 is 1st, .. 0 is last
-        if slot == 9
-          key = '0'
-        else
-          key = ''+(slot + 1)
+    const outerDiv = document.createElement('div');
+    outerDiv.style.width = '100%';
+    outerDiv.style.textAlign = 'center';
+    outerDiv.appendChild(container);
 
-        # human-readable keybinding name (1-based)
-        slotName = 'slot' + (slot + 1)
+    document.body.appendChild(outerDiv);
 
-        if @game.shell?
-          @game.shell.bind slotName, key
-        else if @game.buttons.bindings?
-          @game.buttons.bindings[key] = slotName
+    this.enable();
+  }
 
-        @keys.down.on slotName, @onSlots[key] = () =>
-          @setSelectedIndex slot
+  setSelectedIndex(x) {
+    event = {
+      oldIndex: this.selectedIndex,
+      newIndex:x,
+      cancelled:false,
+    };
 
-    else  # fallback kb-controls support
-      @keydown = (ev) =>   # note: doesn't disable when gui open - above does
-        if '0'.charCodeAt(0) <= ev.keyCode <= '9'.charCodeAt(0)
-          slot = ev.keyCode - '0'.charCodeAt(0)
-          if slot == 0
-            slot = 10
-          slot -= 1
-          @setSelectedIndex slot
-      ever(document.body).on 'keydown', @keydown
+    this.emit('selectionChanging', event);
+    if (event.cancelled) return;
 
-    super()
+    this.inventoryWindow.setSelected(x);
+    super.setSelectedIndex(x);
+  }
+
+  enable() {
+    this.inventoryWindow.container.style.visibility = '';
+    this.onSlots = {};
+
+    if (this.wheelEnable) {
+      ever(document.body).on('mousewheel', this.mousewheel = (ev) => { // TODO: also DOMScrollWheel for Firefox
+        console.log('mousewheel',ev);
+        let delta = ev.wheelDelta;
+        delta /= this.wheelScale;
+        delta = Math.floor(delta);
+
+        let newSlot = this.selectedIndex + delta;
+        function true_modulo(a, b) { return (a % b + b) % b; } // a %% b
+        newSlot = true_modulo(newSlot, this.inventoryWindow.width);
+        console.log(newSlot);
+        this.setSelectedIndex(newSlot);
+      });
+    }
+
+    if (this.game.shell || this.game.buttons.bindings) { // configurable bindings available
+      for (let slot = 0; slot <= 9; ++slot) {
+        // key numeric 1 is slot 0th, 2 is 1st, .. 0 is last
+        let key;
+        if (slot === 9) {
+          key = '0';
+        } else {
+          key = ''+(slot + 1);
+        }
+
+        // human-readable keybinding name (1-based)
+        const slotName = 'slot' + (slot + 1);
+
+        if (this.game.shell) {
+          this.game.shell.bind(slotName, key);
+        } else if (this.game.buttons.bindings) {
+          this.game.buttons.bindings[key] = slotName;
+        }
+
+        this.keys.down.on(slotName, this.onSlots[key] = () => {
+          this.setSelectedIndex(slot);
+        });
+      }
+    } else {  // fallback kb-controls support
+      throw new Error('fallback kb-controls support removed');
+    }
+
+    super.enable();
+  }
   
-  disable: () ->
-    @inventoryWindow.container.style.visibility = 'hidden'
+  disable() {
+    this.inventoryWindow.container.style.visibility = 'hidden';
 
-    ever(document.body).removeListener 'mousewheel', @mousewheel if @mousewheel?
+    if (this.mousewheel !== undefined) ever(document.body).removeListener('mousewheel', this.mousewheel);
 
-    if @game.shell?
-      for key in [1..10]
-        @game.shell.unbind 'slot' + key
-        @keys.down.removeListener 'slot' + key, @onSlots[key - 1]
-    else if @game.buttons.bindings?
-      for key in [1..10]
-        delete @game.buttons.bindings[key - 1]
-        @keys.down.removeListener 'slot' + key, @onSlots[key - 1]
-    else
-      ever(document.body).removeListener 'keydown', @keydown
+    if (this.game.shell) {
+      for (let key = 1; key <= 10; ++key) {
+        this.game.shell.unbind('slot' + key);
+        this.keys.down.removeListener('slot' + key, this.onSlots[key - 1]);
+      }
+    } else if (this.game.buttons.bindings) {
+      for (let key = 1; key <= 10; ++key) {
+        delete this.game.buttons.bindings[key - 1];
+        this.keys.down.removeListener('slot' + key, this.onSlots[key - 1]);
+      }
+    } else {
+      ever(document.body).removeListener('keydown', this.keydown);
+    }
 
-    super()
+    super.disable();
+  }
 
-  refresh: () ->
-    @inventoryWindow.refresh()
-
+  refresh() {
+    this.inventoryWindow.refresh();
+  }
+}
 
