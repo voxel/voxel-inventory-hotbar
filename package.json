@@ -1,7 +1,7 @@
 {
   "name": "voxel-inventory-hotbar",
   "description": "a hotbar for player inventory (voxel.js plugin)",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "main": "hotbar.js",
   "keywords": [
     "voxel",
